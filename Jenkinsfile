@@ -9,6 +9,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'sonartoken', variable: 'sonartoken')]) {
           bat("mvn -Dmaven.test.failure.ignore verify sonar:sonar -Dsonar.login=$sonartoken -Dsonar.projectKey=easybuggy -Dsonar.host.url=http://localhost:9000/")
+          echo 'compile stage complete'
         }
       }
     }
