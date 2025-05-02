@@ -1,32 +1,32 @@
 pipeline {
   agent any
   tools {
-    maven 'Maven_3_8_7'
+    maven 'maven'
   }
 
   stages {
     stage('CompileandRunSonarAnalysis') {
       steps {
-        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+        withCredentials([string(credentialsId: 'sonartoken', variable: 'sonartoken')]) {
           bat("mvn -Dmaven.test.failure.ignore verify sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.projectKey=easybuggy -Dsonar.host.url=http://localhost:9000/")
         }
       }
     }
     stage('Build') {
       steps {
-        withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+        withDockerRegistry([credentialsId: "dockertoken", url: ""]) {
           script {
-            app = docker.build("asecurityguru/testeb")
+            app = docker.build("masudrana09/testeb")
           }
         }
       }
     }
     stage('RunContainerScan') {
       steps {
-        withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
+        withCredentials([string(credentialsId: 'snyktoken', variable: 'snyktoken')]) {
           script {
             try {
-              bat("C:\\snyk\\snyk-win.exe  container test asecurityguru/testeb")
+              bat("C:\\snyk\\snyk-win.exe  container test masudrana09/testeb")
             } catch (err) {
               echo err.getMessage()
             }
@@ -36,14 +36,14 @@ pipeline {
     }
     stage('RunSnykSCA') {
       steps {
-        withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
+        withCredentials([string(credentialsId: 'snyktoken', variable: 'snyktoken')]) {
           bat("mvn snyk:test -fn")
         }
       }
     }
     stage('RunDASTUsingZAP') {
       steps {
-        bat("C:\\zap\\ZAP_2.12.0_Crossplatform\\ZAP_2.12.0\\zap.sh -port 9393 -cmd -quickurl https://www.example.com -quickprogress -quickout C:\\zap\\ZAP_2.12.0_Crossplatform\\ZAP_2.12.0\\Output.html")
+        bat("C:\\Users\\masud\\Downloads\\DevSecOps Course\\ZAP_2.16.1\\zap.sh -port 9393 -cmd -quickurl https://www.example.com -quickprogress -quickout C:\\Users\\masud\\Downloads\\DevSecOps Course\\ZAP_2.16.1\\Output.html")
       }
     }
 
