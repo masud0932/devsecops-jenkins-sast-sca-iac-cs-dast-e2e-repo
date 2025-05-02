@@ -29,7 +29,7 @@ pipeline {
         withCredentials([string(credentialsId: 'snyktoken', variable: 'snyktoken')]) {
           script {
             try {
-              bat("C:\\Users\\masud\\Downloads\\DevSecOps Course\\Container scan-Snyk\\snyk-win.exe auth %snyktoken%")
+              bat("C:\\Users\\masud\\Downloads\\DevSecOps Course\\Container scan-Snyk\\snyk-win.exe auth $snyktoken")
               bat("C:\\Users\\masud\\Downloads\\DevSecOps Course\\Container scan-Snyk\\snyk-win.exe container test masudrana09/testeb")
             } catch (err) {
               echo "Snyk container scan failed: ${err.getMessage()}"
